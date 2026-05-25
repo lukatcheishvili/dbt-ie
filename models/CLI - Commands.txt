@@ -1,0 +1,57 @@
+### To go to the folder:
+cd "C:\Users\LukaCheishvili\Documents\GitHub\Analytics Engineering\dbt-ie"
+
+### To activate the environment:
+cd "C:\Users\LukaCheishvili\Documents\GitHub\Analytics Engineering\dbt-ie"
+
+.\.venv\Scripts\Activate.ps1
+
+
+### To update the environement:
+git fetch origin
+
+git fetch origin
+# Only downloads the remote changes into git's internal database
+# Does not touch your working directory at all — nothing changes in your files
+# You then have to manually merge with git merge origin/main to apply those changes
+
+git pull
+
+# git pull
+# Fetches remote changes AND merges them into your current branch
+# Does not delete your local files — untracked files (new files you added that git doesn't know about) are left completely alone
+# Only affects files that git is already tracking
+
+
+### Query a table — with Makefile shortcut:
+
+make dbq "select * from stg_customers limit 5"
+
+Same thing — full command:
+
+duckdb my_database.duckdb -c "select * from stg_customers limit 5"
+
+### When rinning this code:
+
+dbt build --select int_customers_enriched
+
+# Compiles the SQL (resolves all ref() and source() calls into real table names)
+# Runs the model — executes the SQL and materializes it in DuckDB
+# Tests it — runs any tests defined in the YAML docs for that model (like not_null, unique)
+# We basically build a View, because you added {{ config(materialized='view') }} at the top of the file, 
+  # running that command will create it as a view in DuckDB. If you hadn't added that config, 
+  # dbt would use whatever the default materialization is set in dbt_project.yml for that layer.
+
+
+### To check the data types of the columns within the table:
+
+make schema stg_customers   # run it in the Compiles
+
+
+### At the end of every Intermediate table we are asked to:
+
+# run a focused build:
+dbt build --select <model_name>
+
+# after creating all the tables run the check command:
+dbt build --select "models/Intermediate"

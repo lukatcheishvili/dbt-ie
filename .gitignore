@@ -113,3 +113,4 @@ generate_ecommerce_data.py
 # Instructor-only docs
 documentation/publishing_strategy.md
 documentation/session_*_live_coding.md
+dbt_internal_packages/
