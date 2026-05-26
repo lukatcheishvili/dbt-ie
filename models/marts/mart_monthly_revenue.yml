@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: mart_monthly_revenue
+    description: Monthly revenue summary aggregating order counts and amounts by status, used for trend and performance reporting.
+    columns:
+      - name: order_month
+        description: First day of the calendar month (truncated from order_date).
+        tests:
+          - unique
+          - not_null
+      - name: order_count
+        description: Total number of orders placed in the month (all statuses).
+      - name: gross_revenue
+        description: Sum of total_amount for all orders in the month regardless of status.
+      - name: completed_revenue
+        description: Sum of total_amount for completed orders only.
+      - name: cancelled_or_refunded_revenue
+        description: Sum of total_amount for cancelled or refunded orders.
+      - name: average_order_value
+        description: Mean total_amount across all orders in the month.

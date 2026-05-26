@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: Customer orders with status, amounts, and address references.
+    columns:
+      - name: order_id
+        description: Primary key for the order.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers.
+        tests:
+          - not_null
+      - name: order_date
+        description: Date the order was placed.
+      - name: status
+        description: Current fulfillment status of the order.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['pending', 'shipped', 'completed', 'cancelled', 'refunded']
+      - name: subtotal
+        description: Sum of line item prices before tax, shipping, and order-level discounts.
+      - name: tax_amount
+        description: Tax charged on the order.
+      - name: shipping_cost
+        description: Shipping fee charged to the customer.
+      - name: discount_amount
+        description: Order-level discount applied (excludes line item discounts).
+      - name: total_amount
+        description: Final amount charged to the customer (subtotal + tax + shipping - discount).
+        tests:
+          - not_null
+          - is_positive:
+              where: "status in ('completed', 'shipped')"
+      - name: currency
+        description: ISO 4217 currency code for all monetary amounts on this order.
+      - name: payment_method
+        description: Payment method used at checkout (may differ from payment records if changed).
+      - name: shipping_address_id
+        description: Foreign key to stg_customer_addresses for the delivery address.
+      - name: billing_address_id
+        description: Foreign key to stg_customer_addresses for the billing address.
+      - name: coupon_code
+        description: Promotional code applied to the order; null if none was used.

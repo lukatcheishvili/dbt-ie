@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_categories
+    description: Product categories used to classify items in the catalog.
+    columns:
+      - name: category_id
+        description: Primary key for the category.
+        tests:
+          - unique
+          - not_null
+      - name: category_name
+        description: Display name of the category.
+        tests:
+          - not_null
+      - name: parent_category_id
+        description: References the parent category for nested hierarchies; null for top-level categories.
+      - name: description
+        description: Free-text description of the category.
+      - name: is_active
+        description: Whether the category is currently active and visible in the catalog.

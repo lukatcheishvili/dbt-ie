@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: mart_customer_rfm
+    description: RFM (Recency, Frequency, Monetary) customer segmentation built in Python using pandas. Each customer receives 1–5 quintile scores per dimension and is classified into a named segment.
+    columns:
+      - name: customer_id
+        description: Primary key; foreign key to dim_customers.
+        tests:
+          - unique
+          - not_null
+      - name: recency_days
+        description: Number of days since the customer's last completed order, as of the model run date.
+        tests:
+          - not_null
+          - is_positive
+      - name: frequency
+        description: Total number of completed orders placed by the customer.
+        tests:
+          - not_null
+      - name: monetary
+        description: Total revenue from completed orders for the customer.
+        tests:
+          - is_positive
+      - name: r_score
+        description: Recency quintile score (1–5); 5 = most recent.
+      - name: f_score
+        description: Frequency quintile score (1–5); 5 = most frequent.
+      - name: m_score
+        description: Monetary quintile score (1–5); 5 = highest spender.
+      - name: rfm_score
+        description: Sum of r_score, f_score, and m_score; ranges from 3 to 15.
+        tests:
+          - not_null
+          - is_positive
+      - name: segment
+        description: Named customer segment derived from rfm_score (champion ≥13, loyal ≥10, at_risk ≥7, lost <7).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['champion', 'loyal', 'at_risk', 'lost']

@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: stg_suppliers
+    description: Supplier master data including contact information, location, and performance attributes.
+    columns:
+      - name: supplier_id
+        description: Primary key for the supplier.
+        tests:
+          - unique
+          - not_null
+      - name: supplier_name
+        description: Legal or trade name of the supplier.
+      - name: contact_email
+        description: Primary email address for supplier communications.
+      - name: contact_phone
+        description: Primary phone number for supplier communications.
+      - name: country
+        description: Country where the supplier is based.
+      - name: city
+        description: City where the supplier is based.
+      - name: rating
+        description: Internal supplier performance rating.
+      - name: lead_time_days
+        description: Typical number of days from order placement to receipt of goods.
+      - name: is_active
+        description: Whether the supplier is currently active and approved for purchasing.
+      - name: contract_start_date
+        description: Date when the supplier contract became effective.

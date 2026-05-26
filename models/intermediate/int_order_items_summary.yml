@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: int_order_items_summary
+    description: Order-level aggregation of line items, collapsing multiple items into a single row per order with quantity and revenue totals.
+    columns:
+      - name: order_id
+        description: Primary key; foreign key to stg_orders.
+        tests:
+          - unique
+          - not_null
+      - name: order_item_count
+        description: Number of distinct line items in the order.
+      - name: total_quantity
+        description: Sum of quantities across all line items.
+      - name: gross_item_revenue
+        description: Sum of (unit_price × quantity) before discounts.
+      - name: total_item_discount_amount
+        description: Sum of discount_amount across all line items.
+      - name: net_item_revenue
+        description: Sum of total_price across all line items (gross revenue minus line-item discounts).

@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: int_order_shipping_status
+    description: Orders joined with shipment details, adding calculated delivery performance fields such as days late and a bucketed performance label.
+    columns:
+      - name: order_id
+        description: Primary key; foreign key to stg_orders.
+        tests:
+          - unique
+          - not_null
+      - name: order_date
+        description: Date the order was placed.
+      - name: carrier
+        description: Shipping carrier for the order.
+      - name: shipping_method
+        description: Service level (e.g., standard, express).
+      - name: shipping_status
+        description: Current status of the shipment.
+      - name: ship_date
+        description: Date the package was handed to the carrier.
+      - name: estimated_delivery
+        description: Carrier-promised delivery date.
+      - name: actual_delivery
+        description: Date the package was actually delivered.
+      - name: days_to_ship
+        description: Number of days between order_date and ship_date.
+      - name: days_late
+        description: Number of days actual_delivery exceeded estimated_delivery; negative means early.
+      - name: is_late
+        description: True when actual_delivery is after estimated_delivery.
+      - name: shipping_performance_bucket
+        description: Categorical delivery outcome (early, on_time, late, not_shipped, unknown).
+        tests:
+          - accepted_values:
+              values: ['early', 'on_time', 'late', 'not_shipped', 'unknown']

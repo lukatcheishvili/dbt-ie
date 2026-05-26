@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_payments
+    description: Payment transactions associated with orders, including method, amount, and status.
+    columns:
+      - name: payment_id
+        description: Primary key for the payment transaction.
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to stg_orders.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: customer_id
+        description: Foreign key to stg_customers.
+      - name: payment_date
+        description: Date the payment was processed.
+      - name: payment_method
+        description: Payment instrument used (e.g., credit_card, paypal, bank_transfer).
+      - name: amount
+        description: Amount captured in this payment transaction.
+      - name: currency
+        description: ISO 4217 currency code for the payment amount.
+      - name: status
+        description: Outcome of the payment attempt.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['completed', 'pending', 'failed', 'refunded']
+      - name: transaction_id
+        description: External transaction identifier from the payment processor.
+      - name: card_last_four
+        description: Last four digits of the card used; null for non-card payment methods.
+      - name: payment_processor
+        description: Name of the payment gateway or processor that handled the transaction.

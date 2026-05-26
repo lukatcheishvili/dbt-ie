@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: Customer dimension combining profile attributes with lifetime order metrics. One row per customer; serves as the primary customer lookup for all mart models.
+    columns:
+      - name: customer_id
+        description: Primary key for the customer.
+        tests:
+          - unique
+          - not_null
+      - name: full_name
+        description: Customer's full name (first + last).
+      - name: email
+        description: Customer's email address.
+        tests:
+          - unique
+          - not_null
+      - name: email_domain
+        description: Domain portion of the customer's email address.
+      - name: country
+        description: Country where the customer is located.
+      - name: customer_segment
+        description: Named marketing segment (Bronze, Silver, Gold, Platinum).
+        tests:
+          - accepted_values:
+              values: ['Bronze', 'Silver', 'Gold', 'Platinum']
+      - name: segment_id
+        description: Numeric identifier for the segment from the segments seed.
+      - name: total_orders
+        description: Lifetime number of orders placed by the customer (all statuses).
+      - name: total_spent
+        description: Lifetime sum of total_amount for completed orders only.
+      - name: first_order_date
+        description: Date of the customer's first order.
+      - name: last_order_date
+        description: Date of the customer's most recent order.
+      - name: average_order_value
+        description: Mean total_amount across completed orders; 0 for customers with no completed orders.
+      - name: is_repeat_customer
+        description: True when the customer has placed more than one order.

@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: int_customer_order_sequence
+    description: Orders enriched with per-customer sequence numbers and days between consecutive orders, enabling repeat-purchase analysis.
+    columns:
+      - name: order_id
+        description: Primary key for the order.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers.
+        tests:
+          - not_null
+      - name: order_date
+        description: Date the order was placed.
+      - name: status
+        description: Fulfillment status of the order.
+      - name: customer_order_number
+        description: Sequential position of this order within the customer's order history (1 = first order).
+        tests:
+          - not_null
+      - name: is_first_order
+        description: True when customer_order_number = 1; flags the customer's inaugural purchase.
+        tests:
+          - not_null
+      - name: previous_order_date
+        description: Date of the immediately preceding order for this customer; null for the first order.
+      - name: days_since_previous_order
+        description: Number of days between this order and the previous one; null for the first order.

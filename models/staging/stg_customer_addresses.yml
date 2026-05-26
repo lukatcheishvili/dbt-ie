@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_customer_addresses
+    description: Shipping and billing addresses associated with customers.
+    columns:
+      - name: address_id
+        description: Primary key for the address record.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: address_type
+        description: Whether the address is used for shipping, billing, or both.
+      - name: street_address
+        description: Street number and name.
+      - name: city
+        description: City name.
+      - name: state
+        description: State or province.
+      - name: postal_code
+        description: ZIP or postal code.
+      - name: country
+        description: Country name or ISO code.
+      - name: is_default
+        description: Whether this is the customer's default address.

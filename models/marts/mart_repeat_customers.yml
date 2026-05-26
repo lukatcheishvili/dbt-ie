@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: mart_repeat_customers
+    description: Customers who have placed more than one order, with statistics on purchase cadence derived from order sequence data.
+    columns:
+      - name: customer_id
+        description: Primary key; foreign key to dim_customers. Only customers with more than one order are included.
+        tests:
+          - unique
+          - not_null
+      - name: total_orders
+        description: Total number of orders placed by the customer.
+      - name: avg_days_between_orders
+        description: Mean number of days between consecutive orders, rounded to 1 decimal place.
+      - name: min_days_between_orders
+        description: Shortest gap in days between any two consecutive orders.
+      - name: max_days_between_orders
+        description: Longest gap in days between any two consecutive orders.
+      - name: last_order_date
+        description: Date of the customer's most recent order.

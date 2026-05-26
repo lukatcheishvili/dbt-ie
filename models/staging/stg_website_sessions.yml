@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_website_sessions
+    description: Web session records capturing visitor behavior, acquisition source, and conversion outcome.
+    columns:
+      - name: session_id
+        description: Primary key for the session.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers; null for unauthenticated sessions.
+      - name: session_date
+        description: Date the session occurred.
+      - name: device_type
+        description: Type of device used (e.g., desktop, mobile, tablet).
+      - name: browser
+        description: Web browser used during the session.
+      - name: source
+        description: Traffic acquisition source (e.g., organic, paid, email, direct).
+      - name: landing_page
+        description: URL path of the first page viewed in the session.
+      - name: page_views
+        description: Total number of pages viewed during the session.
+      - name: session_duration_seconds
+        description: Length of the session in seconds.
+      - name: is_bounce
+        description: Whether the visitor left after viewing only the landing page.
+      - name: converted
+        description: Whether the session resulted in a completed purchase.
+      - name: ip_address
+        description: IP address of the visitor (may be masked or anonymized for compliance).

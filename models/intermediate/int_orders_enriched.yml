@@ -1,0 +1,87 @@
+version: 2
+
+models:
+  - name: int_orders_enriched
+    description: Fully enriched order grain combining order amounts, line item summaries, shipping performance, payment status, and boolean status flags. Primary input for mart-layer order models.
+    columns:
+      - name: order_id
+        description: Primary key for the order.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: order_date
+        description: Date the order was placed.
+      - name: status
+        description: Fulfillment status of the order.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['pending', 'shipped', 'completed', 'cancelled', 'refunded']
+      - name: subtotal
+        description: Sum of line item prices before tax, shipping, and order-level discounts.
+      - name: tax_amount
+        description: Tax charged on the order.
+      - name: shipping_cost
+        description: Shipping fee charged to the customer.
+      - name: discount_amount
+        description: Order-level discount applied.
+      - name: total_amount
+        description: Final amount charged (subtotal + tax + shipping - discount).
+      - name: currency
+        description: ISO 4217 currency code for all monetary amounts.
+      - name: payment_method
+        description: Payment method recorded at checkout.
+      - name: has_order_items
+        description: True when at least one line item record exists for this order.
+      - name: order_item_count
+        description: Number of distinct line items in the order.
+      - name: total_quantity
+        description: Total units ordered across all line items.
+      - name: gross_item_revenue
+        description: Revenue from line items before discounts.
+      - name: net_item_revenue
+        description: Revenue from line items after line-item discounts.
+      - name: carrier
+        description: Shipping carrier for the order.
+      - name: shipping_method
+        description: Shipping service level selected.
+      - name: shipping_status
+        description: Current status of the shipment.
+      - name: days_to_ship
+        description: Days from order placement to handoff to carrier.
+      - name: days_late
+        description: Days by which actual delivery exceeded the estimated date; negative means early.
+      - name: is_late
+        description: True when delivery occurred after the estimated date.
+      - name: shipping_performance_bucket
+        description: Categorical delivery outcome (early, on_time, late, not_shipped, unknown).
+      - name: total_paid_amount
+        description: Sum of all completed payment transactions for this order.
+      - name: primary_payment_method
+        description: Payment method most associated with completed payments on this order.
+      - name: payment_status_summary
+        description: Aggregated payment outcome (paid, partially_paid, unpaid, unknown).
+        tests:
+          - accepted_values:
+              values: ['paid', 'partially_paid', 'unpaid', 'unknown']
+      - name: is_completed_order
+        description: True when status = 'completed'.
+        tests:
+          - not_null
+      - name: is_cancelled_order
+        description: True when status = 'cancelled'.
+        tests:
+          - not_null
+      - name: is_refunded_order
+        description: True when status = 'refunded'.
+        tests:
+          - not_null
+      - name: is_paid
+        description: True when at least one completed payment exists for the order.

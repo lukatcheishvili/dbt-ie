@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_shipping
+    description: Shipment records linked to orders, including carrier, dates, and delivery status.
+    columns:
+      - name: order_id
+        description: Primary key and foreign key to stg_orders; one shipment record per order.
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: carrier
+        description: Shipping carrier handling the delivery (e.g., UPS, FedEx, USPS).
+      - name: tracking_number
+        description: Carrier-issued tracking number for the shipment.
+      - name: shipping_method
+        description: Service level selected at checkout (e.g., standard, express, overnight).
+      - name: shipping_cost
+        description: Cost of shipping charged on this shipment.
+      - name: ship_date
+        description: Date the package was handed to the carrier.
+      - name: estimated_delivery
+        description: Carrier's estimated delivery date at time of shipment.
+      - name: actual_delivery
+        description: Date the package was actually delivered; null if not yet delivered.
+      - name: shipping_status
+        description: Current status of the shipment.
+        tests:
+          - accepted_values:
+              values: ['pending', 'shipped', 'in_transit', 'delivered', 'returned']
+      - name: weight_kg
+        description: Weight of the shipped package in kilograms.

@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_order_items
+    description: Individual line items within each order, one row per product per order.
+    columns:
+      - name: order_item_id
+        description: Primary key for the order line item.
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to stg_orders.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: product_id
+        description: Foreign key to stg_products.
+        tests:
+          - not_null
+      - name: quantity
+        description: Number of units of this product in the order.
+        tests:
+          - not_null
+      - name: unit_price
+        description: Price per unit at the time of purchase.
+      - name: discount_amount
+        description: Total discount applied to this line item.
+      - name: total_price
+        description: Final line item price after discounts (unit_price * quantity - discount_amount).

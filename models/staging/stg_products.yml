@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_products
+    description: Product catalog with pricing, physical attributes, and availability status.
+    columns:
+      - name: product_id
+        description: Primary key for the product.
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: Display name of the product.
+      - name: category_id
+        description: Foreign key to stg_categories.
+      - name: supplier_id
+        description: Foreign key to stg_suppliers.
+      - name: price
+        description: Current retail price of the product.
+      - name: cost
+        description: Unit cost to the business (used for margin calculations).
+      - name: weight_kg
+        description: Product weight in kilograms.
+      - name: dimensions_cm
+        description: Product dimensions in centimeters (format varies by source).
+      - name: description
+        description: Free-text product description shown to customers.
+      - name: sku
+        description: Stock keeping unit identifier for warehouse and inventory management.
+      - name: barcode
+        description: Barcode (EAN/UPC) for the product.
+      - name: status
+        description: Current availability status of the product.
+        tests:
+          - accepted_values:
+              values: ['active', 'discontinued', 'out_of_stock']
+      - name: created_date
+        description: Date the product was first added to the catalog.
+      - name: is_featured
+        description: Whether the product is flagged for featured placement on the storefront.

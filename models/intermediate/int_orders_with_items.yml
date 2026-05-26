@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: int_orders_with_items
+    description: Orders joined with aggregated line item metrics, adding item count and revenue summaries while preserving all order-level address and coupon fields.
+    columns:
+      - name: order_id
+        description: Primary key for the order.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers.
+        tests:
+          - not_null
+      - name: order_date
+        description: Date the order was placed.
+      - name: status
+        description: Fulfillment status of the order.
+      - name: subtotal
+        description: Sum of line item prices before tax, shipping, and order-level discounts.
+      - name: tax_amount
+        description: Tax charged on the order.
+      - name: shipping_cost
+        description: Shipping fee charged to the customer.
+      - name: discount_amount
+        description: Order-level discount applied.
+      - name: total_amount
+        description: Final amount charged (subtotal + tax + shipping - discount).
+      - name: currency
+        description: ISO 4217 currency code for all monetary amounts.
+      - name: payment_method
+        description: Payment method recorded at checkout.
+      - name: shipping_address_id
+        description: Foreign key to stg_customer_addresses for the delivery address.
+      - name: billing_address_id
+        description: Foreign key to stg_customer_addresses for the billing address.
+      - name: coupon_code
+        description: Promotional code applied to the order; null if none was used.
+      - name: has_order_items
+        description: True when at least one matching line item record exists.
+      - name: order_item_count
+        description: Number of distinct line items in the order.
+      - name: total_quantity
+        description: Total units ordered across all line items.
+      - name: gross_item_revenue
+        description: Revenue from line items before discounts.
+      - name: total_item_discount_amount
+        description: Total discount amount across all line items.
+      - name: net_item_revenue
+        description: Revenue from line items after line-item discounts.

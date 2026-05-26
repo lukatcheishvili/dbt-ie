@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: mart_payment_method_breakdown
+    description: Customer-level breakdown of completed payments by method, pivoted into one column per payment type using the pivot_count macro.
+    columns:
+      - name: customer_id
+        description: Primary key; foreign key to dim_customers.
+        tests:
+          - unique
+          - not_null
+      - name: total_payments
+        description: Total number of completed payment transactions for the customer.
+      - name: total_paid
+        description: Total amount paid across all completed transactions.
+      - name: credit_card_count
+        description: Number of completed payments made by credit card.
+      - name: paypal_count
+        description: Number of completed payments made via PayPal.
+      - name: bank_transfer_count
+        description: Number of completed payments made by bank transfer.
+      - name: apple_pay_count
+        description: Number of completed payments made via Apple Pay.
+      - name: google_pay_count
+        description: Number of completed payments made via Google Pay.

@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: int_payments_by_order
+    description: Payment transactions aggregated to order grain, summarising payment count, total collected, and overall payment status.
+    columns:
+      - name: order_id
+        description: Primary key; foreign key to stg_orders.
+        tests:
+          - unique
+          - not_null
+      - name: payment_count
+        description: Total number of payment attempts (all statuses) for this order.
+      - name: successful_payment_count
+        description: Number of payment attempts with status = 'completed'.
+      - name: total_paid_amount
+        description: Sum of amounts from completed payments only.
+      - name: primary_payment_method
+        description: Payment method derived from the most recent completed payment on the order.
+      - name: has_successful_payment
+        description: True when at least one completed payment exists.
+      - name: payment_status_summary
+        description: Aggregated payment outcome for the order.
+        tests:
+          - accepted_values:
+              values: ['paid', 'partially_paid', 'unpaid', 'unknown']

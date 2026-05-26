@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: int_customers_enriched
+    description: Customer records enriched with derived name fields, email domain, and the numeric segment_id from the segments seed.
+    columns:
+      - name: customer_id
+        description: Primary key for the customer.
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: Customer's first name.
+      - name: last_name
+        description: Customer's last name.
+      - name: full_name
+        description: Concatenation of first_name and last_name.
+      - name: email
+        description: Customer's email address.
+        tests:
+          - unique
+          - not_null
+      - name: email_domain
+        description: Domain portion of the email address (everything after @).
+      - name: country
+        description: Country where the customer is located.
+      - name: customer_segment
+        description: Named marketing segment (Bronze, Silver, Gold, Platinum).
+      - name: segment_id
+        description: Numeric identifier for the segment, joined from the segments seed.

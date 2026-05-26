@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: mart_product_review_summary
+    description: Product-level review aggregation built in Python using Polars, including rating statistics, positive/negative breakdowns, and a review tier classification.
+    columns:
+      - name: product_id
+        description: Primary key; foreign key to stg_products.
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: Display name of the product.
+      - name: price
+        description: Current retail price of the product.
+      - name: avg_rating
+        description: Mean customer rating for the product, rounded to 2 decimal places.
+        tests:
+          - not_null
+      - name: review_count
+        description: Total number of reviews submitted for the product.
+      - name: positive_count
+        description: Number of reviews with rating ≥ 4.
+      - name: negative_count
+        description: Number of reviews with rating ≤ 2.
+      - name: pct_positive
+        description: Percentage of reviews that are positive (rating ≥ 4), rounded to 1 decimal place.
+      - name: total_helpful_votes
+        description: Sum of helpful_votes across all reviews for the product.
+      - name: review_tier
+        description: Quality tier derived from avg_rating (well_reviewed ≥4.0, mixed ≥3.0, poorly_reviewed <3.0).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['well_reviewed', 'mixed', 'poorly_reviewed']

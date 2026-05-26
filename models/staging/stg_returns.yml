@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: stg_returns
+    description: Customer return requests with reason, quantity, refund amount, and processing status.
+    columns:
+      - name: return_id
+        description: Primary key for the return request.
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to stg_orders; the order containing the returned item.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: order_item_id
+        description: Foreign key to stg_order_items; the specific line item being returned.
+      - name: product_id
+        description: Foreign key to stg_products; the product being returned.
+      - name: customer_id
+        description: Foreign key to stg_customers; the customer initiating the return.
+      - name: return_date
+        description: Date the return was initiated.
+      - name: return_reason
+        description: Customer-provided reason for the return.
+      - name: return_quantity
+        description: Number of units being returned.
+      - name: refund_amount
+        description: Amount to be refunded to the customer.
+      - name: return_status
+        description: Current processing state of the return request.
+        tests:
+          - accepted_values:
+              values: ['pending', 'approved', 'rejected', 'processed']
+      - name: processing_fee
+        description: Fee deducted from the refund for processing the return, if applicable.

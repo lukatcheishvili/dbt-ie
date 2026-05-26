@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_reviews
+    description: Customer product reviews with ratings, text, and engagement signals.
+    columns:
+      - name: review_id
+        description: Primary key for the review.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers; the reviewer.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: product_id
+        description: Foreign key to stg_products; the reviewed product.
+        tests:
+          - not_null
+      - name: order_id
+        description: Foreign key to stg_orders; the order through which the product was purchased.
+      - name: rating
+        description: Numeric rating on a 1–5 scale; 5 is the highest.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+      - name: review_title
+        description: Short headline written by the reviewer.
+      - name: review_text
+        description: Full review body written by the reviewer.
+      - name: review_date
+        description: Date the review was submitted.
+      - name: is_verified_purchase
+        description: Whether the review comes from a confirmed purchaser of the product.
+      - name: helpful_votes
+        description: Number of other customers who marked this review as helpful.

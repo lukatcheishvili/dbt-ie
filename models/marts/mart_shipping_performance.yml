@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: mart_shipping_performance
+    description: Carrier and shipping method performance metrics including on-time rate and average delay, used for logistics reporting.
+    columns:
+      - name: carrier
+        description: Shipping carrier name.
+        tests:
+          - not_null
+      - name: shipping_method
+        description: Service level (e.g., standard, express, overnight).
+      - name: total_shipments
+        description: Total number of shipments handled by this carrier and method combination.
+      - name: on_time_count
+        description: Number of shipments delivered on or before the estimated date.
+      - name: late_count
+        description: Number of shipments delivered after the estimated date.
+      - name: on_time_rate
+        description: Percentage of shipments delivered on time, rounded to 2 decimal places.
+        tests:
+          - not_null
+      - name: avg_days_to_ship
+        description: Average number of days from order placement to carrier handoff, rounded to 2 decimal places.
+      - name: avg_days_late
+        description: Average days late for shipments that missed the estimated delivery; null when no late shipments exist.

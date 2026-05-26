@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_inventory
+    description: Current stock levels per product per warehouse.
+    columns:
+      - name: product_id
+        description: Foreign key to stg_products.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: warehouse
+        description: Identifier or name of the warehouse holding this stock.
+        tests:
+          - not_null
+      - name: current_stock
+        description: Number of units currently in stock.
+      - name: reorder_point
+        description: Stock level at which a reorder should be triggered.
+      - name: max_stock
+        description: Maximum storage capacity for this product in this warehouse.
+      - name: last_updated
+        description: Timestamp of the most recent stock level update.
+      - name: supplier_id
+        description: Foreign key to stg_suppliers; the supplier associated with this inventory record.
