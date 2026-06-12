@@ -1,0 +1,14 @@
+%% Materializations comparison matrix — flat LR layout, no subgraphs.
+%% Re-render with: ./render_diagrams.sh materializations_matrix
+graph LR
+    V["<b>view</b><br/>Re-runs SQL on every query<br/>Always fresh · no storage cost<br/>Slow on large datasets"]:::view
+    T["<b>table</b><br/>Full rebuild on each run<br/>Fast queries · stale until run<br/>Expensive on large datasets"]:::table
+    E["<b>ephemeral</b><br/>Compiles to an inline CTE<br/>No storage · no direct queries<br/>Zero overhead at query time"]:::eph
+    I["<b>incremental</b><br/>Appends / merges new rows only<br/>Fastest builds on large tables<br/>Requires unique_key"]:::incr
+
+    V ~~~ T ~~~ E ~~~ I
+
+    classDef view  fill:#e8e2d5,stroke:#153360,color:#153360,stroke-width:1.5px
+    classDef table fill:#e8e2d5,stroke:#153360,color:#153360,stroke-width:1.5px
+    classDef eph   fill:#e8e2d5,stroke:#7a8599,color:#1a1f2e,stroke-width:1px,stroke-dasharray:4 3
+    classDef incr  fill:#153360,stroke:#153360,color:#ffffff,stroke-width:2px

@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: mart_revenue_tiers
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: revenue_tier
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['low', 'medium', 'high']
+      - name: revenue_tier_strict
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['low', 'medium', 'high']
+      - name: total_amount
+        tests:
+          - is_positive
+
+  - name: mart_channel_performance
+    columns:
+      - name: source
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['direct', 'email', 'facebook', 'google', 'instagram', 'referral']
+      - name: device_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['desktop', 'mobile', 'tablet']
+      - name: conversion_rate
+        tests:
+          - not_null
+          - is_positive
+      - name: channel_quality
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['high_performing', 'average', 'low_performing']
+
+  - name: mart_daily_sessions
+    columns:
+      - name: session_day
+        tests:
+          - unique
+          - not_null
+      - name: sessions
+        tests:
+          - not_null
+      - name: conversions
+        tests:
+          - not_null
+      - name: conversion_rate
+        tests:
+          - not_null
+      - name: unique_sources
+        tests:
+          - not_null
