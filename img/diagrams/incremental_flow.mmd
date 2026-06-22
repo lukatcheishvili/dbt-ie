@@ -1,0 +1,15 @@
+%% is_incremental() execution path diagram for Session 17.
+%% Re-render with: ./render_diagrams.sh incremental_flow
+flowchart LR
+    RUN[/"dbt run -s model_name"/]:::cmd
+    Q{"is_incremental()"}
+    F["<b>Full rebuild</b><br/>Drop and recreate table<br/>All rows from source processed"]:::full
+    I["<b>Incremental merge</b><br/>Filter WHERE date &gt;= max<br/>Merge on unique_key only"]:::incr
+
+    RUN --> Q
+    Q -->|"false — first run<br/>or --full-refresh"| F
+    Q -->|"true — table already exists"| I
+
+    classDef cmd  fill:#e8e2d5,stroke:#153360,color:#153360,stroke-width:1.5px
+    classDef full fill:#e8e2d5,stroke:#7a8599,color:#1a1f2e,stroke-width:1.5px
+    classDef incr fill:#153360,stroke:#153360,color:#ffffff,stroke-width:2px

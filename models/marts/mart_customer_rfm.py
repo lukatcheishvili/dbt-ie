@@ -14,7 +14,7 @@ def model(dbt, session):
     dbt.config(materialized="table")
 
     # Load upstream model — same dbt.ref() you know from SQL models
-    orders = dbt.ref("int_orders_enriched").df()
+    orders = dbt.ref("int_orders_enriched").df() # now its a pandas dataframe
 
     # Python filtering: clean and familiar
     completed = orders[orders["status"] == "completed"].copy()

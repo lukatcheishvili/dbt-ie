@@ -1,0 +1,10 @@
+%% SCD2 row-history diagram for Session 17 — snapshot anatomy slide.
+%% Re-render with: ./render_diagrams.sh scd2_timeline
+flowchart LR
+    R1["<b>Row 1 — closed</b><br/>customer_id: 42<br/>customer_segment: regular<br/>dbt_valid_from: 2024-01-01<br/>dbt_valid_to: 2024-06-15"]:::closed
+    R2["<b>Row 2 — current</b><br/>customer_id: 42<br/>customer_segment: enterprise<br/>dbt_valid_from: 2024-06-15<br/>dbt_valid_to: null"]:::current
+
+    R1 -->|"attribute change captured<br/>on 2nd dbt snapshot run"| R2
+
+    classDef closed  fill:#e8e2d5,stroke:#7a8599,color:#1a1f2e,stroke-width:1.5px
+    classDef current fill:#153360,stroke:#153360,color:#ffffff,stroke-width:2px

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px; color: #1a1a1a; font-size: 14px; line-height: 1.6; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  h2 { font-size: 17px; margin-top: 32px; margin-bottom: 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  h3 { font-size: 15px; margin-top: 20px; margin-bottom: 6px; }
+  p, li { margin: 6px 0; }
+  code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 12.5px; font-family: "SF Mono", monospace; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: white; text-align: left; padding: 8px 12px; }
+  td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) td { background: #f7f7f7; }
+  ul { padding-left: 20px; }
+  .checklist li { list-style: none; padding-left: 4px; }
+  .checklist li::before { content: "☐ "; }
+  .meta { color: #666; font-size: 13px; margin-bottom: 32px; }
+  .section { margin-bottom: 28px; }
+  .time { font-size: 12px; color: #888; font-weight: normal; }
+  @media print { body { margin: 20px; } }
+</style>
+</head>
+<body>
+
+<h1>Practice Session IV: Macros, Python Models &amp; Testing</h1>
+<p class="meta">Analytics Engineering · Session 16 · ~1 hour</p>
+
+<div class="section">
+<h2>Goal</h2>
+<p>Consolidate yesterday's session: write macros from scratch, build a Python model, and add a full test suite to your work.</p>
+<p>By the end you will have:</p>
+<ul>
+  <li>A new macro using Jinja <code>if/elif/else</code> and default arguments</li>
+  <li>A Python model (Pandas) that analyzes website traffic</li>
+  <li>A full test suite — generic, singular, and custom generic tests</li>
+  <li>A clean <code>dbt build</code> with zero failures</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Checklist</h2>
+<ul class="checklist">
+  <li><code>macros/classify_revenue.sql</code> — macro with <code>if/elif/else</code> + default arguments</li>
+  <li><code>models/marts/mart_revenue_tiers.sql</code> — SQL model that uses the macro twice</li>
+  <li><code>models/marts/mart_channel_performance.py</code> — Pandas Python model</li>
+  <li><code>models/marts/_new_models.yml</code> — tests for both new models</li>
+  <li><code>tests/assert_channel_conversion_rate_is_valid.sql</code> — singular test</li>
+  <li><code>dbt build -s mart_revenue_tiers mart_channel_performance</code> passes with zero failures</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Exercise 1 — Macro <span class="time">(20 min)</span></h2>
+
+<h3>Part A: Write the macro</h3>
+<p>Create <code>macros/classify_revenue.sql</code>.</p>
+<p>The macro takes an <code>amount_col</code> argument and returns a <code>case</code> expression that assigns <code>'low'</code>, <code>'medium'</code>, or <code>'high'</code> based on thresholds.</p>
+<ul>
+  <li>Default thresholds: <code>low = 100</code>, <code>high = 500</code></li>
+  <li>Callers must be able to override the thresholds at the call site</li>
+</ul>
+
+<h3>Part B: Use the macro in a model</h3>
+<p>Create <code>models/marts/mart_revenue_tiers.sql</code> using <code>int_orders_enriched</code> as the source.</p>
+<p>Include only completed orders. Pass through <code>order_id</code>, <code>customer_id</code>, <code>order_date</code>, <code>status</code>, <code>total_amount</code>, and add:</p>
+<table>
+  <tr><th>Column</th><th>Description</th></tr>
+  <tr><td><code>revenue_tier</code></td><td>Classified with <strong>default</strong> thresholds</td></tr>
+  <tr><td><code>revenue_tier_strict</code></td><td>Classified with <code>low=50, high=200</code></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Exercise 2 — Python Model <span class="time">(25 min)</span></h2>
+<p>Create <code>models/marts/mart_channel_performance.py</code> using <code>stg_website_sessions</code>.</p>
+<p>Available columns: <code>session_id</code>, <code>source</code>, <code>device_type</code>, <code>page_views</code>, <code>session_duration_seconds</code>, <code>is_bounce</code>, <code>converted</code>.</p>
+<p>Group by <code>source</code> and <code>device_type</code>. The model must produce:</p>
+<table>
+  <tr><th>Column</th><th>Description</th></tr>
+  <tr><td><code>source</code></td><td>Traffic source</td></tr>
+  <tr><td><code>device_type</code></td><td></td></tr>
+  <tr><td><code>total_sessions</code></td><td>Count of sessions</td></tr>
+  <tr><td><code>conversions</code></td><td>Count of converted sessions</td></tr>
+  <tr><td><code>avg_page_views</code></td><td></td></tr>
+  <tr><td><code>avg_duration_seconds</code></td><td></td></tr>
+  <tr><td><code>bounce_rate</code></td><td>Share of bounced sessions</td></tr>
+  <tr><td><code>conversion_rate</code></td><td><code>conversions / total_sessions * 100</code></td></tr>
+  <tr><td><code>channel_quality</code></td><td><code>'high_performing'</code> ≥ 10%, <code>'average'</code> ≥ 5%, else <code>'low_performing'</code></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Exercise 3 — Tests <span class="time">(15 min)</span></h2>
+
+<h3>Generic tests</h3>
+<p>Add <code>models/marts/_new_models.yml</code> with tests for both models:</p>
+<ul>
+  <li><strong>mart_revenue_tiers</strong>: <code>order_id</code> unique and not null; <code>revenue_tier</code> and <code>revenue_tier_strict</code> not null and only <code>'low'</code>, <code>'medium'</code>, <code>'high'</code>; <code>total_amount</code> positive</li>
+  <li><strong>mart_channel_performance</strong>: <code>source</code> and <code>device_type</code> not null and only known values; <code>conversion_rate</code> and <code>channel_quality</code> not null; <code>conversion_rate</code> positive</li>
+</ul>
+
+<h3>Singular test</h3>
+<p>Create <code>tests/assert_channel_conversion_rate_is_valid.sql</code>:</p>
+<ul>
+  <li>Business rule: <code>conversion_rate</code> must be between 0 and 100</li>
+  <li>The query must return the rows that violate the rule (if any)</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Verify</h2>
+<p>Run the full build:</p>
+<p><code>dbt build -s mart_revenue_tiers mart_channel_performance</code></p>
+<p>All models and tests must pass. To inspect the SQL your macro generated before running:</p>
+<p><code>dbt compile -s mart_revenue_tiers</code></p>
+</div>
+
+<div class="section">
+<h2>Bonus — Extend the Macro</h2>
+<p>Rewrite <code>classify_revenue</code> so that thresholds and labels are passed as <strong>lists</strong> instead of individual arguments. The caller should be able to pass any number of thresholds and matching labels without changing the macro itself. Use a Jinja <code>for</code> loop to generate the <code>case</code> branches dynamically.</p>
+</div>
+
+</body>
+</html>

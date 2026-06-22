@@ -3,15 +3,13 @@ def model(dbt, session):
     Website traffic performance aggregated by source and device type.
 
     Python is useful here because:
-    - groupby/agg in Pandas is more readable than GROUP BY with many aggregations
-    - channel_quality classification with .apply() is cleaner than nested CASE WHEN
+    - groupby/agg in Pandas is readable for multi-metric aggregations
+    - channel_quality classification with .apply() avoids nested CASE logic
     """
     dbt.config(materialized="table")
 
-    # Load upstream staging model — .df() converts DuckDB relation to Pandas DataFrame
     sessions = dbt.ref("stg_website_sessions").df()
 
-    # Group by source and device_type, compute all aggregations in one step
     perf = (
         sessions
         .groupby(["source", "device_type"])
@@ -25,21 +23,23 @@ def model(dbt, session):
         .reset_index()
     )
 
-    # Derived metrics — calculated after aggregation
-    perf["bounce_rate"] = perf["bounces"] / perf["total_sessions"] * 100
-    perf["conversion_rate"] = perf["conversions"] / perf["total_sessions"] * 100
+    perf["bounce_rate"] = (
+        perf["bounces"] / perf["total_sessions"] * 100
+    ).round(2)
+    perf["conversion_rate"] = (
+        perf["conversions"] / perf["total_sessions"] * 100
+    ).round(2)
 
-    # Classify channel quality based on conversion_rate threshold
-    # Python .apply() shines here vs deeply nested SQL CASE expressions
     def classify_channel(conversion_rate):
         if conversion_rate >= 10:
             return "high_performing"
-        elif conversion_rate >= 5:
+        if conversion_rate >= 5:
             return "average"
-        else:
-            return "low_performing"
+        return "low_performing"
 
     perf["channel_quality"] = perf["conversion_rate"].apply(classify_channel)
+    for column in ["source", "device_type", "channel_quality"]:
+        perf[column] = perf[column].astype("object")
 
     return perf[[
         "source",
@@ -51,4 +51,7 @@ def model(dbt, session):
         "bounce_rate",
         "conversion_rate",
         "channel_quality",
-    ]]
+    ]].round({
+        "avg_page_views": 1,
+        "avg_duration_seconds": 0,
+    })

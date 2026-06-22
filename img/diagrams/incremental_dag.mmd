@@ -1,0 +1,13 @@
+%% End-to-end lineage for mart_daily_sessions — incremental model in project context.
+%% Re-render with: ./render_diagrams.sh incremental_dag
+flowchart LR
+    SRC[/"raw.website_sessions<br/>source — grows with every session"/]:::src
+    STG["stg_website_sessions<br/>view — cleans and aliases columns"]:::staging
+    MART["mart_daily_sessions<br/>incremental · unique_key: session_day<br/>merge strategy"]:::incr
+
+    SRC --> STG --> MART
+    MART -.->|"{% if is_incremental() %}<br/>WHERE session_day > max(session_day)<br/>from {{ this }}"| STG
+
+    classDef src     fill:#e8e2d5,stroke:#7a8599,color:#1a1f2e,stroke-width:1.5px
+    classDef staging fill:#e8e2d5,stroke:#153360,color:#153360,stroke-width:1.5px
+    classDef incr    fill:#153360,stroke:#153360,color:#ffffff,stroke-width:2px

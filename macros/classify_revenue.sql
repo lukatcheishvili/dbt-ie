@@ -1,31 +1,27 @@
 -- =============================================================================
--- MACRO: classify_revenue (bonus — list-based version)
+-- MACRO: classify_revenue
 -- =============================================================================
--- Generates a CASE expression dynamically from threshold and label lists.
--- A Jinja for loop builds one WHEN branch per threshold.
--- The last label is always the ELSE branch.
+-- Generates a CASE expression for revenue tiers.
+-- Supports the baseline low/high arguments and the bonus list-based thresholds.
 --
--- Arguments:
---   amount_col  (required) — column to classify, e.g. 'total_amount'
---   thresholds  (default=[100, 500])              — N upper bounds (ascending)
---   labels      (default=['low','medium','high'])  — N+1 labels (one per tier)
---
--- Default call — identical output to the original macro:
+-- Default call:
 --   {{ classify_revenue('total_amount') }}
 --
--- Custom thresholds at the call site:
---   {{ classify_revenue('total_amount', thresholds=[50, 200], labels=['low', 'medium', 'high']) }}
+-- Baseline overrides:
+--   {{ classify_revenue('total_amount', low=50, high=200) }}
 --
--- Any number of tiers — no macro change needed:
+-- List-based overrides:
 --   {{ classify_revenue('total_amount', thresholds=[100, 500, 1000], labels=['bronze', 'silver', 'gold', 'platinum']) }}
 -- =============================================================================
 
-{% macro classify_revenue(amount_col, thresholds=[100, 500], labels=['low', 'medium', 'high']) %}
+{% macro classify_revenue(amount_col, low=100, high=500, thresholds=none, labels=none) %}
+    {%- set tier_thresholds = thresholds if thresholds is not none else [low, high] -%}
+    {%- set tier_labels = labels if labels is not none else ['low', 'medium', 'high'] -%}
     case
-        {% for i in range(thresholds | length) %}
-        when {{ amount_col }} < {{ thresholds[i] }}
-            then '{{ labels[i] }}'
+        {% for i in range(tier_thresholds | length) %}
+        when {{ amount_col }} < {{ tier_thresholds[i] }}
+            then '{{ tier_labels[i] }}'
         {% endfor %}
-        else '{{ labels[thresholds | length] }}'
+        else '{{ tier_labels[tier_thresholds | length] }}'
     end
 {% endmacro %}
